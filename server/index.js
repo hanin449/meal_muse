@@ -1,18 +1,17 @@
 const express = require("express");
 const cors = require("cors");
-const bodyParser = require("body-parser");
-const { router: auth } = require("./routes/auth");
-const { router: recipeRoute } = require("./routes/recipeRoutes");
+const recipeRoute  = require("./routes/recipeRoutes");
+const reviewRoute = require("./routes/reviewRoutes"); 
 
 const app = express();
 
 // Enable CORS and Body Parser before routes
 app.use(cors());
-app.use(bodyParser.json());
 
+app.use(express.json());
 // Routes
-app.use(auth);
-app.use(recipeRoute);
+app.use('/api/recipes', recipeRoute); 
+app.use('/api/reviews', reviewRoute);
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API!");

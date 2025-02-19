@@ -4,10 +4,10 @@ function RecipeForm() {
   const [recipe, setRecipe] = useState({
     recipe_name: '',
     recipe_description: '',
-    recipe_ingredients: '',  // Fix naming to match backend
-    recipe_instruction: '',
+    recipe_ingredients: '', 
+    recipe_instructions: '',
+    servings: '', 
     time: '',
-    servings: '', // Fix naming to match backend
     recipe_category: '',
     recipe_country: ''
   });
@@ -20,7 +20,7 @@ function RecipeForm() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/recipes', {
+      const response = await fetch('http://localhost:5000/api/recipe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,8 +37,8 @@ function RecipeForm() {
           recipe_description: '',
           recipe_ingredients: '',
           recipe_instruction: '',
-          time: '',
           servings: '',
+          time: '',
           recipe_category: '',
           recipe_country: ''
         });
@@ -57,8 +57,8 @@ function RecipeForm() {
       <textarea name="recipe_description" placeholder="Recipe Description" value={recipe.recipe_description} onChange={handleChange} required />
       <textarea name="recipe_ingredients" placeholder="Ingredients" value={recipe.recipe_ingredients} onChange={handleChange} required />
       <textarea name="recipe_instruction" placeholder="Instructions" value={recipe.recipe_instruction} onChange={handleChange} required />
-      <input type="number" name="time" placeholder="Preparation Time (mins)" value={recipe.time} onChange={handleChange} required />
       <input type="number" name="servings" placeholder="Servings" value={recipe.servings} onChange={handleChange} required />
+      <input type="number" name="time" placeholder="Preparation Time (mins)" value={recipe.time} onChange={handleChange} required />
       <input type="text" name="recipe_category" placeholder="Category (e.g. Italian)" value={recipe.recipe_category} onChange={handleChange} required />
       <input type="text" name="recipe_country" placeholder="Country of Origin" value={recipe.recipe_country} onChange={handleChange} required />
       <button type="submit">Submit Recipe</button>

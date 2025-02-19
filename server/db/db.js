@@ -1,12 +1,11 @@
-require("dotenv").config(); // Load environment variables
+require("dotenv").config();  // Make sure to load the environment variables
+
 const { Pool } = require("pg");
 
-// Create a connection pool using the DATABASE_URL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: false
+  ssl: false, 
 });
 
 module.exports = pool;
-
 

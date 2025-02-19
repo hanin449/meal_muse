@@ -6,10 +6,8 @@ function ReviewSection({ reviews }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Submit the new review (simulated here)
     const newReviewData = {
       review_id: reviews.length + 1,
-      user_id: 103, // Simulate logged-in user ID
       recipe_id: reviews[0]?.recipe_id || 1,
       review_text: newReview,
       rating: rating

@@ -9,15 +9,15 @@ router.post('/', async (req, res) => {
       recipe_name,
       recipe_description,
       recipe_ingredients,
-      recipe_instruction,
-      time,
+      recipe_instructions,
       servings,
+      time,
       recipe_category,
       recipe_country,
     } = req.body;
 
     const query = `
-      INSERT INTO recipes (recipe_name, recipe_description, recipe_ingredients, recipe_instruction, time, servings, recipe_category, recipe_country)
+      INSERT INTO recipe (recipe_name, recipe_description, recipe_ingredients, recipe_instructions,servings, time, recipe_category, recipe_country)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;
     `;
 
@@ -25,9 +25,9 @@ router.post('/', async (req, res) => {
       recipe_name,
       recipe_description,
       recipe_ingredients,
-      recipe_instruction,
-      time,
+      recipe_instructions,
       servings,
+      time,
       recipe_category,
       recipe_country,
     ];
@@ -47,25 +47,37 @@ router.post('/', async (req, res) => {
 // GET All Recipes
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM recipes ORDER BY id DESC');
+    const result = await pool.query('SELECT * FROM recipe ORDER BY recipe_id ASC');
     res.status(200).json(result.rows);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: 'Failed to fetch recipes', error: error.message });
   }
 });
-
-// GET Single Recipe by ID
+// GET Single Recipe by ID with Reviews
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM recipes WHERE id = $1', [id]);
 
-    if (result.rows.length === 0) {
+    // Fetch the recipe details
+    const recipeQuery = `SELECT * FROM recipe WHERE recipe_id = $1`;
+    const recipeResult = await pool.query(recipeQuery, [id]);
+
+    if (recipeResult.rows.length === 0) {
       return res.status(404).json({ message: 'Recipe not found' });
     }
 
-    res.status(200).json(result.rows[0]);
+    // Fetch the associated reviews
+    const reviewQuery = `SELECT review_id, reviewer_name, review_text, rating FROM review WHERE recipe_id = $1 ORDER BY review_id ASC`;
+    const reviewResult = await pool.query(reviewQuery, [id]);
+
+    // Combine recipe details with its reviews
+    const recipeWithReviews = {
+      ...recipeResult.rows[0], // Recipe data
+      reviews: reviewResult.rows, // Array of reviews
+    };
+
+    res.status(200).json(recipeWithReviews);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: 'Failed to fetch recipe', error: error.message });
@@ -80,27 +92,27 @@ router.put('/:id', async (req, res) => {
       recipe_name,
       recipe_description,
       recipe_ingredients,
-      recipe_instruction,
-      time,
+      recipe_instructions,
       servings,
+      time,
       recipe_category,
       recipe_country,
     } = req.body;
 
     const query = `
-      UPDATE recipes
-      SET recipe_name = $1, recipe_description = $2, recipe_ingredients = $3, recipe_instruction = $4,
+      UPDATE recipe
+      SET recipe_name = $1, recipe_description = $2, recipe_ingredients = $3, recipe_instructions = $4,
           time = $5, servings = $6, recipe_category = $7, recipe_country = $8
-      WHERE id = $9 RETURNING *;
+      WHERE recipe_id = $9 RETURNING *;
     `;
 
     const values = [
       recipe_name,
       recipe_description,
       recipe_ingredients,
-      recipe_instruction,
-      time,
+      recipe_instructions,
       servings,
+      time,
       recipe_category,
       recipe_country,
       id,
@@ -123,7 +135,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('DELETE FROM recipes WHERE id = $1 RETURNING *;', [id]);
+    const result = await pool.query('DELETE FROM recipe WHERE recipe_id = $1 RETURNING *;', [id]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Recipe not found' });
@@ -136,4 +148,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = { router };
+module.exports = router;
