@@ -33,15 +33,20 @@ function ReviewSection({ reviews, recipeId, setReviews }) {
   return (
     <div className="review-section">
       <h3>Reviews</h3>
-      <ul>
-        {reviews.map((review) => (
-          <li key={review.review_id}>
-            <strong>Reviewer:</strong> {review.reviewer_name || 'Anonymous'} <br />
-            <strong>Rating:</strong> {review.rating}/5 <br />
-            {review.review_text}
-          </li>
-        ))}
-      </ul>
+      {/* Conditional rendering based on whether there are reviews */}
+      {reviews.length > 0 ? (
+        <ul>
+          {reviews.map((review) => (
+            <li key={review.review_id}>
+              <strong>Reviewer:</strong> {review.reviewer_name || 'Anonymous'} <br />
+              <strong>Rating:</strong> {review.rating}/5 <br />
+              {review.review_text}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No reviews yet. Be the first to add a review!</p> // Display this message if there are no reviews
+      )}
 
       <form onSubmit={handleSubmit}>
         <input
