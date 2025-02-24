@@ -20,7 +20,7 @@ function RecipeForm() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/recipe', {
+      const response = await fetch('http://localhost:5000/api/recipes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ function RecipeForm() {
           recipe_name: '',
           recipe_description: '',
           recipe_ingredients: '',
-          recipe_instruction: '',
+          recipe_instructions: '',
           servings: '',
           time: '',
           recipe_category: '',

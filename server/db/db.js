@@ -1,4 +1,4 @@
-require("dotenv").config();  // Make sure to load the environment variables
+require("dotenv").config(); 
 
 const { Pool } = require("pg");
 

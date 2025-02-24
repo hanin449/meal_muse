@@ -15,9 +15,9 @@ router.post('/', async (req, res) => {
       recipe_category,
       recipe_country,
     } = req.body;
-
+    
     const query = `
-      INSERT INTO recipe (recipe_name, recipe_description, recipe_ingredients, recipe_instructions,servings, time, recipe_category, recipe_country)
+      INSERT INTO recipe (recipe_name, recipe_description, recipe_ingredients, recipe_instructions, servings, time, recipe_category, recipe_country)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;
     `;
 
@@ -44,16 +44,27 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET All Recipes
+// GET All Recipes with Search
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM recipe ORDER BY recipe_id ASC');
+    const { search } = req.query; 
+    let query = 'SELECT * FROM recipe ORDER BY recipe_id ASC';
+    let values = [];
+
+    if (search) {
+      // Modify query to search in recipe_name and recipe_description
+      query = `SELECT * FROM recipe WHERE recipe_name ILIKE $1 OR recipe_description ILIKE $1 ORDER BY recipe_id ASC`;
+      values = [`%${search}%`]; 
+    }
+
+    const result = await pool.query(query, values);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: 'Failed to fetch recipes', error: error.message });
   }
 });
+
 // GET Single Recipe by ID with Reviews
 router.get('/:id', async (req, res) => {
   try {
@@ -73,8 +84,8 @@ router.get('/:id', async (req, res) => {
 
     // Combine recipe details with its reviews
     const recipeWithReviews = {
-      ...recipeResult.rows[0], // Recipe data
-      reviews: reviewResult.rows, // Array of reviews
+      ...recipeResult.rows[0], 
+      reviews: reviewResult.rows, 
     };
 
     res.status(200).json(recipeWithReviews);

@@ -16,8 +16,12 @@ function RecipeCard({ recipe }) {
     
     <div className="recipe-card">
       <h2>{recipe.recipe_name}</h2>
-      <p>{recipe.recipe_description.substring(0, 100)}...</p>
-      <p><strong>Servings:</strong> {recipe.servings} | <strong>Time:</strong> {recipe.time} mins</p>
+      <p><strong>Description:</strong> {recipe.recipe_description.substring(0, 100)}...</p>
+      <h3>Ingredients:</h3>
+      <p>{recipe.recipe_ingredients.substring(0, 50)}...</p>
+      <p><strong>Servings:</strong> {recipe.servings}</p>
+      <p><strong>Time:</strong> {recipe.time} mins</p>
+      <p><strong>Category:</strong> {recipe.recipe_category}</p>
       <p><strong>Country:</strong> {recipe.recipe_country}</p>
       <Link to={`/recipe/${recipe.recipe_id}`}>View Full Recipe</Link>
     </div>

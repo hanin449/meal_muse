@@ -1,15 +1,17 @@
 const express = require("express");
-const pool = require("../db/db"); // Import the pool for DB connection
+const pool = require("../db/db"); 
 const router = express.Router();
 
 // CREATE Review
 router.post("/", async (req, res) => {
   try {
     const { recipe_id, reviewer_name, review_text, rating } = req.body;
+
     // Check if required fields are present
     if (!recipe_id || !reviewer_name || !review_text || !rating) {
-         return res.status(400).json({ message: "All fields are required." });
-  }
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
     const query = `
       INSERT INTO review (recipe_id, reviewer_name, review_text, rating)
       VALUES ($1, $2, $3, $4) RETURNING *;
@@ -32,17 +34,15 @@ router.post("/", async (req, res) => {
 router.get("/:recipe_id", async (req, res) => {
   try {
     const { recipe_id } = req.params;
-    console.log("Received recipe_id:", recipe_id); // Debugging
     const result = await pool.query("SELECT * FROM review WHERE recipe_id = $1", [recipe_id]);
 
     if (result.rows.length === 0) {
-        console.log("No reviews found for this recipe"); // Debugging
       return res.status(404).json({ message: "No reviews found for this recipe" });
     }
-    console.log("Reviews found:", result.rows); // Debugging
+
     res.status(200).json(result.rows);
   } catch (error) {
-    console.error("Error fetching reviews:", error.message); // Debugging
+    console.error("Error fetching reviews:", error.message);
     res.status(500).json({ message: "Failed to fetch reviews", error: error.message });
   }
 });
@@ -59,7 +59,7 @@ router.get("/review/:id", async (req, res) => {
 
     res.status(200).json(result.rows[0]);
   } catch (error) {
-    console.error("Error fetching reviews:",error.message);
+    console.error("Error fetching review:", error.message);
     res.status(500).json({ message: "Failed to fetch review", error: error.message });
   }
 });
