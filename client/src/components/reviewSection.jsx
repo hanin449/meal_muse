@@ -36,6 +36,7 @@ function ReviewSection({ reviews, recipeId, setReviews }) {
       <ul>
         {reviews.map((review) => (
           <li key={review.review_id}>
+            <strong>Reviewer:</strong> {review.reviewer_name || 'Anonymous'} <br />
             <strong>Rating:</strong> {review.rating}/5 <br />
             {review.review_text}
           </li>
